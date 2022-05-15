@@ -18,10 +18,32 @@ import pyjokes
 from time import time
 
 start_time = time()
+
+#Cambiar formato de idioma y genero
+
+
+#language = 'us_US'
+language = 'es_ES'
+gender = 'VoiceGenderFemale'
+
+def change_voice(engine, language, gender):
+    for voice in engine.getProperty('voices'):
+        if language in voice.languages and gender == voice.gender:
+            engine.setProperty('voice', voice.id)
+            return True
+        else:
+            print("language encontrado:", language, voice)
+            #raise RuntimeError("Language '{}' for gender '{}' not found".format(language, gender))
+
+#Inicializa engine pyttsx3
 engine = pyttsx3.init()
 
+change_voice(engine, language, gender)
+engine.say("hola amigo")
+engine.runAndWait()
+
 # name of the virtual assistant
-name = 'alexa'
+name = 'robot'
 attemts = 0
 
 # keys
@@ -35,15 +57,22 @@ normal_color = "\033[0;37;40m"
 
 # get voices and set the first of them
 voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)
+engine.setProperty('voice', voices[1].id)
+
 
 # editing default configuration
-engine.setProperty('rate', 178)
-engine.setProperty('volume', 0.7)
+engine.setProperty('rate', 130)
+engine.setProperty('volume', 1.0)
 
 day_es = [line.rstrip('\n') for line in open('src/day/day_es.txt')]
 day_en = [line.rstrip('\n') for line in open('src/day/day_en.txt')]
 
+# Setear lenguage  : es-ES, en_US, de_DE, ...
+# language  : es-ES, en_US, de_DE, ...
+# gender    : VoiceGenderFemale, VoiceGenderMale
+
+
+# Iterar dias
 def iterateDays(now):
     for i in range(len(day_en)):
         if day_en[i] in now:
@@ -136,12 +165,15 @@ while True:
                 # yt.play(music)
 
         elif 'cuantos suscriptores tiene' in rec:
+            order = rec.replace('robot', '')
+            print(order)
             name_subs = rec.replace('cuantos suscriptores tiene', '')
-            
+            print("Procesando...")
             speak("Procesando...")
             while True:
                 try:
                     channel = yt.getChannelInfo(name_subs)
+                    print(channel["name"] + " tiene " + channel["subs"])
                     speak(channel["name"] + " tiene " + channel["subs"])
                     break
                 except:
@@ -150,7 +182,11 @@ while True:
 
         elif 'que' in rec:
             if 'hora' in rec:
+                order = rec.replace('robot', '')
+                print(order)
+                speak(order)
                 hora = datetime.now().strftime('%I:%M %p')
+                print(f"Son las {hora}")
                 speak(f"Son las {hora}")
 
             elif 'dia' in rec:
@@ -163,16 +199,31 @@ while True:
             order = rec.replace('busca', '')
             wikipedia.set_lang("es")
             info = wikipedia.summary(order, 1)
+            print(info)
             speak(info)
 
         elif 'chiste' in rec:
+            order = rec.replace('robot', '')
+            print(order)
+            speak(order)
+
             chiste = pyjokes.get_joke("es")
+            print(chiste)
             speak(chiste)
 
         elif 'cuanto es' in rec:
+            order = rec.replace('robot', '')
+            print(order)
+            speak(order)
+            
+            print(sm.getResult(rec))
             speak(sm.getResult(rec))
+            
 
         elif 'descansa' in rec:
+            order = rec.replace('robot', '')
+            print(order)
+            print("Saliendo...")
             speak("Saliendo...")
             break
 
